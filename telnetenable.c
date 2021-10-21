@@ -5,7 +5,7 @@
   The original Netgear Windows binary version of this tool is available here:
   http://www.netgear.co.kr/Support/Product/FileInfo.asp?IDXNo=155
   
-  Per DMCA 17 U.S.C. ง1201(f)(1)-(2), the original Netgear executable was
+  Per DMCA 17 U.S.C. ยง1201(f)(1)-(2), the original Netgear executable was
   reverse engineered to enable interoperability with other operating systems
   not supported by the original windows-only tool (MacOS, Linux, etc).
 
@@ -236,7 +236,7 @@ int main(int argc, char * argv[])
 	write(fd, output_buf, datasize);
 	close(fd);
 
-	puts("Payload send.");
+	puts("Payload sent.");
 	puts("If the data is correct, R9000 will open telnet.");
 	
 	return 0;
