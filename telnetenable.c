@@ -45,6 +45,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 #include <arpa/inet.h>
 #include <openssl/evp.h>
 #include <openssl/md5.h>
@@ -67,7 +68,7 @@ static char *hash_data(char *mess)
 	EVP_MD_CTX *mdctx;
 	const EVP_MD *md;
 	unsigned char md_value[EVP_MAX_MD_SIZE];
-	unsigned md_len, i = 0;
+	unsigned md_len;
 	char hash[64];
 
 	OpenSSL_add_all_digests();
@@ -79,7 +80,7 @@ static char *hash_data(char *mess)
 	EVP_MD_CTX_destroy(mdctx);
 	EVP_cleanup();
 
-	for(; i < md_len; ++i)
+	for (int i = 0; i < md_len; ++i)
 		sprintf(&hash[2 * i], "%02X", md_value[i]);
 
 	return strdup(hash);
@@ -189,6 +190,8 @@ int fill_payload(char *p, char *argv[])
 	strncpy(password, hash_data(argv[3]), sizeof(password) - 1);
 	char *tok = strtok(argv[2], ":");
 	while (tok) {
+		for (int i = 0; i < strlen(tok); ++i)
+			tok[i] = toupper(tok[i]);
 		strcat(mac, tok);
 		tok = strtok(NULL, ":");
 	}
