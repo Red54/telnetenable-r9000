@@ -7,13 +7,13 @@ all: telnetenable
 
 CFLAGS += -Wall -Wunused -g -O2
 
-FILES = blowfish.o md5.o telnetenable.o
+FILES = blowfish.o telnetenable.o
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
 telnetenable: $(FILES)
-	$(CC) -o $@ $^ -lconfig $(LDFLAGS)
+	$(CC) -o $@ $^ -lcrypto $(LDFLAGS)
 
 clean:
 	rm -f *.o telnetenable

@@ -12,7 +12,7 @@ implementation, and is therefore only usable to craft individual magic
 packets, but not to send them to the router.
 
 To compile, use
-  gcc -o telnetenable telnetenable.c md5.c Blowfish.c
+  gcc -o telnetenable telnetenable.c blowfish.c -lcrypto
 
 To run it, pass the same parameters as you would pass to the original 
 tool (telnetEnable.exe by Netgear) upon command line invocation. You
