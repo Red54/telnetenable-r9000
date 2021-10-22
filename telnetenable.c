@@ -180,7 +180,7 @@ int fill_payload(char *p, char *argv[])
 	BLOWFISH_CTX BF;
 	struct PAYLOAD payload;
 	char *username = "admin";
-	char password[64];
+	char password[0x40];
 	char mac[0x10], MD5_key[0x11];
 	char secret_key[0x80];
 
@@ -194,9 +194,9 @@ int fill_payload(char *p, char *argv[])
 	}
 	
 	memset(&payload, 0, sizeof(payload));
-	strcpy(payload.mac, mac);
-	strcpy(payload.username, username);
-	strcpy(payload.password, password);
+	memcpy(payload.mac, mac, 0x10);
+	memcpy(payload.username, username, 0x10);
+	memcpy(payload.password, password, 0x40);
 
 	MD5_Init(&MD);
 	MD5_Update(&MD, (unsigned char *)payload.mac, 0x70);
