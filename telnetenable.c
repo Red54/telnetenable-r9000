@@ -63,13 +63,12 @@ struct PAYLOAD
 
 #define __BIG_ENDIAN__	1
 
-static char *hash_data(char *mess)
+static void hash_data(char *mess, char *hash)
 {
 	EVP_MD_CTX *mdctx;
 	const EVP_MD *md;
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned md_len;
-	char hash[64];
 
 	OpenSSL_add_all_digests();
 	md = EVP_sha256();
@@ -82,8 +81,6 @@ static char *hash_data(char *mess)
 
 	for (int i = 0; i < md_len; ++i)
 		sprintf(&hash[2 * i], "%02X", md_value[i]);
-
-	return strdup(hash);
 }
 
 static int open_telnet(char *ip)
@@ -183,17 +180,17 @@ int fill_payload(char *p, char *argv[])
 	BLOWFISH_CTX BF;
 	struct PAYLOAD payload;
 	char *username = "admin";
-	char password[108];
+	char password[64];
 	char mac[0x10], MD5_key[0x11];
 	char secret_key[0x80];
 
-	strncpy(password, hash_data(argv[3]), sizeof(password) - 1);
-	char *tok = strtok(argv[2], ":");
+	hash_data(argv[3], password);
+	char *tok = strtok(argv[2], ":-");
 	while (tok) {
 		for (int i = 0; i < strlen(tok); ++i)
 			tok[i] = toupper(tok[i]);
 		strcat(mac, tok);
-		tok = strtok(NULL, ":");
+		tok = strtok(NULL, ":-");
 	}
 	
 	memset(&payload, 0, sizeof(payload));
@@ -220,9 +217,9 @@ int fill_payload(char *p, char *argv[])
 	return encoded_len;
 }
 
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
-	int fd, datasize;
+	int fd, datasize, r;
 	char output_buf[512] = {0};
 
 	if (argc != 4) {
@@ -233,12 +230,19 @@ int main(int argc, char * argv[])
 
 	datasize = fill_payload(output_buf, argv);
 	fd = open_telnet(argv[1]);
-	write(fd, output_buf, datasize);
+	r = write(fd, output_buf, datasize);
 	close(fd);
 
-	puts("Payload sent.");
-	puts("If the data is correct, R9000 will open telnet.");
-	
-	return 0;
+	if (r < 0)
+	{
+		printf("%s\n", strerror(r));
+		return 1;
+	}
+	else
+	{
+		printf("%d bytes payload sent.\n", r);
+		puts("If the data is correct, R9000 will open telnet.");
+		return 0;
+	}
 }
 
