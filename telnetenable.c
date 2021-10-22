@@ -179,7 +179,7 @@ int fill_payload(char *p, char *argv[])
 	MD5_CTX MD;
 	BLOWFISH_CTX BF;
 	struct PAYLOAD payload;
-	char *username = "admin";
+	char username[0x10] = "admin";
 	char password[0x40];
 	char mac[0x10], MD5_key[0x11];
 	char secret_key[0x80];
